@@ -22,25 +22,43 @@ var connection = mysql.createConnection({
   database: "hotrestaurant"
 });
 
+connection.connect(function (err) {
+  console.log('Something happend.')
+})
+
 function returnReservations() {
-  const query = `SELECT ID, uName, phone, email, waitlist FROM reservation`
+  const query = `SELECT ID, uName, phone, email FROM reservation`
   connection.query(query, function (err, res) {
     if (err) throw err;
-    return (res);
+    // return (res);
+    console.log(res);
   })
 };
 
-app.get("/", function(req, res) {
+app.get("/", function (req, res) {
   res.sendFile(path.join(__dirname, "index.html"));
 });
 
-app.get("/reserve", function(req, res) {
+app.get("/reserve", function (req, res) {
   res.sendFile(path.join(__dirname, "reserve.html"));
 });
 
-app.get("/tables", function(req, res) {
+app.get("/tables", function (req, res) {
   res.sendFile(path.join(__dirname, "tables.html"));
 });
+
+app.post("/api/tables", function (req, res) {
+  const query = "INSERT INTO reservation (ID, uName, email, phone) VALUES ('" + req.body.customerID + "', '" 
+    + req.body.customerName + "', '" + req.body.customerEmail + "', '" + req.body.phoneNumber + "')"
+  connection.query(query, function(err, res){
+    if(err) throw err
+    console.log(res);
+  });
+  // console.log(req.body);
+});
+
+
+returnReservations();
 
 // app.post("/api/tables", newReservation, function (data) {
 //   if (data) {
